@@ -36,8 +36,6 @@ camera.on("read", (err, timestamp, filename) => {
     .then((data) => {
       console.log('Upload Succeeded')
       console.log('AWS Response:', data)
-    })
-    .then(() => {
       return cleanCapturedImages(path, filename)
     })
     .then(() => {
