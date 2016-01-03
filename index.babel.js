@@ -8,11 +8,11 @@ const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 const bucket = require('./aws.json').bucket; // config file
 
-const path = `/home/pi/camera/`
-const timestamp = moment().format()
+const path = `./tmp/`
+const timestamp = moment().format("YYYY-MM-DD@HH:mm")
 const name = `${timestamp}.jpg`
 
-console.log('#### timestamp ####', timestamp)
+console.log('#### name ####', name)
 
 const camera = new RaspiCam({
   mode: 'photo',
@@ -29,13 +29,18 @@ const camera = new RaspiCam({
 camera.on("read", (err, timestamp, filename) => {
   if (err) console.error(err)
 
-  console.log('took a picture', filename)
+  console.log(`read event filename: ${filename}`)
 
-  if (!filename.match(/~$/)) { // don't try to upload strange non-photo file
+  if (!filename.match(/~$/)) { // ignore non-photo file
     putImage(path, filename)
     .then((data) => {
-      console.log('Successful upload')
-      console.log('AWS Data Res:', data)
+      console.log('Upload Succeeded')
+      console.log('AWS Response:', data)
+    })
+    .then(() => {
+      return cleanCapturedImages(path, filename)
+    })
+    .then(() => {
       process.exit(0)
     })
     .catch((err) => {
@@ -50,10 +55,7 @@ camera.start() // trigger the camera
 function putImage(path, filename) {
   return new Promise((resolve,reject) => {
     fs.stat(path + filename, (err, info) => { // to get file content length
-      if (err) {
-        console.warn(err)
-        // reject(err)
-      }
+      if (err) console.warn(err)
 
       let params = {
         Bucket: bucket,
@@ -69,6 +71,22 @@ function putImage(path, filename) {
         }
         resolve(data)
       })
+    })
+  })
+}
+
+function cleanCapturedImages(dir, filename) {
+  return new Promise((resolve, reject) => {
+    fs.readdir(dir, (err, files) => {
+      if (err) {
+        console.warn(err)
+        reject(err)
+      }
+      files.forEach((file) => {
+        console.log(`removing file ${file}`)
+        fs.unlink(`${dir}/${file}`)
+      })
+      resolve()
     })
   })
 }
