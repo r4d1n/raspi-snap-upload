@@ -2,9 +2,9 @@
   "name": "raspi-snap-upload",
   "version": "1.0.0",
   "description": "take a picture with a raspberry pi and upload to S3",
-  "main": "index.js",
+  "main": "dist.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "babel index.babel.js -o dist.js"
   },
   "repository": {
     "type": "git",
