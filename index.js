@@ -18,29 +18,6 @@ const tmpDir = config.tmpDir
 const timestamp = moment().format("YYYY-MM-DD@HH:mm")
 const name = `${timestamp}.jpg`
 
-console.log(`#### making a new exposure #### ${name}`)
-
-exec(`fswebcam -r ${config.width}x${config.height} --no-banner ${tmpDir}/${name}`, (err, stdout, stderr) => {
-  if (err) {
-    console.error(err)
-    return
-  }
-
-  putImage(tmpDir, name)
-  .then((data) => {
-    console.log('Upload Succeeded')
-    console.log('AWS Response:', data)
-    return cleanCapturedImages(tmpDir)
-  })
-  .then(() => {
-    process.exit(0)
-  })
-  .catch((err) => {
-    console.warn(err)
-    process.exit(1)
-  })
-})
-
 function putImage(directory, filename) {
   return new Promise((resolve,reject) => {
     fs.stat(`${directory}/${filename}`, (err, info) => { // to get file content length
@@ -79,3 +56,27 @@ function cleanCapturedImages(dir) {
     })
   })
 }
+
+// run it
+console.log(`#### making a new exposure #### ${name}`)
+
+exec(`fswebcam -r ${config.width}x${config.height} --no-banner ${tmpDir}/${name}`, (err, stdout, stderr) => {
+  if (err) {
+    console.error(err)
+    return
+  }
+
+  putImage(tmpDir, name)
+  .then((data) => {
+    console.log('Upload Succeeded')
+    console.log('AWS Response:', data)
+    return cleanCapturedImages(tmpDir)
+  })
+  .then(() => {
+    process.exit(0)
+  })
+  .catch((err) => {
+    console.warn(err)
+    process.exit(1)
+  })
+})
