@@ -3,8 +3,6 @@
 const fs = require('fs')
 const exec = require('child_process').exec
 
-const moment = require('moment')
-
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 
@@ -15,10 +13,10 @@ const height = config.height
 const width = config.width
 const tmpDir = config.tmpDir
 
-const timestamp = moment().format("YYYY-MM-DD@HH:mm")
+const timestamp = new Date().getTime()
 const name = `${timestamp}.jpg`
 
-function putImage(directory, filename) {
+function upload(directory, filename) {
   return new Promise((resolve,reject) => {
     fs.stat(`${directory}/${filename}`, (err, info) => { // to get file content length
       if (err) console.warn(err)
@@ -41,7 +39,7 @@ function putImage(directory, filename) {
   })
 }
 
-function cleanCapturedImages(dir) {
+function cleanup(dir) {
   return new Promise((resolve, reject) => {
     fs.readdir(dir, (err, files) => {
       if (err) {
@@ -66,11 +64,11 @@ exec(`fswebcam -r ${config.width}x${config.height} --no-banner ${tmpDir}/${name}
     return
   }
 
-  putImage(tmpDir, name)
+  upload(tmpDir, name)
   .then((data) => {
     console.log('Upload Succeeded')
     console.log('AWS Response:', data)
-    return cleanCapturedImages(tmpDir)
+    return cleanup(tmpDir)
   })
   .then(() => {
     process.exit(0)

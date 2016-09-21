@@ -15,8 +15,7 @@
   },
   "homepage": "https://github.com/r4d1n/raspi-snap-upload",
   "dependencies": {
-    "aws-sdk": "^2.2.26",
-    "moment": "^2.10.6"
+    "aws-sdk": "^2.2.26"
   },
   "engines" : {
     "node" : ">=6.6.0"
