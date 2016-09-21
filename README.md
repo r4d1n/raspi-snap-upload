@@ -11,7 +11,7 @@ example config:
   "bucket": "your-bucket",
   "height": "1080",
   "width": "1920",
-  "tmpDir": "./tmp",
+  "tmpDir": "tmp",
   "s3Prefix": "images"
 }
 ```

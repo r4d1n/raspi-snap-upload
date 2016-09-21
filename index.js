@@ -6,12 +6,12 @@ const exec = require('child_process').exec
 const AWS = require('aws-sdk')
 const s3 = new AWS.S3()
 
-const config = JSON.parse(fs.readFileSync('./config.json'))
+const config = JSON.parse(fs.readFileSync(`${__dirname}/config.json`))
 
 const bucket = config.bucket
 const height = config.height
 const width = config.width
-const tmpDir = config.tmpDir
+const tmpDir = `${__dirname}/${config.tmpDir}`
 
 const timestamp = new Date().getTime()
 const name = `${timestamp}.jpg`
