@@ -23,7 +23,7 @@ function upload(directory, filename) {
 
       let params = {
         Bucket: bucket,
-        Key: `${config.s3Prefix}/${filename}`,
+        Key: `${config.s3DirPrefix}/${filename}`,
         ContentLength: info.size,
         Body: fs.createReadStream(`${directory}/${filename}`)
       };
